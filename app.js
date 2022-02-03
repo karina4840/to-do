@@ -1,49 +1,145 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const date = require(__dirname + '/date.js');
-
+const mongoose = require('mongoose');
 const app = express();
-
-let items = [];
-let workItems = [];
-
+var _ = require('lodash');
 // ========================================================
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
+mongoose.connect('mongodb://localhost:27017/todoListDB');
 
 // ========================================================
 
-app.get('/', function (req, res) {
+// new schema
+const newItems = {
+  name: String
+};
+// new model
+const Item = mongoose.model('Item', newItems)
 
-  let day = date.getDate();
+const item1 = new Item ({
+  name: 'Welcome to your To Do list!'
+});
 
-  res.render('list', {
-    listTitle: day,
-    newListArray: items
+const item2 = new Item ({
+  name: 'Click the + button to add a new item'
+});
+
+const item3 = new Item ({
+  name: '<-- Hit this to remove an item'
+});
+
+const defaultItems = [item1, item2, item3];
+
+const listSchema = {
+  name: String,
+  items: [newItems]
+}
+
+const List = mongoose.model('List', listSchema);
+
+// ========================================================
+// ===============default route============================
+
+app.get('/', function (req, res){
+
+  Item.find({}, function (err, foundItems) {
+
+    if (foundItems.length === 0) {
+      // inserting default items
+      Item.insertMany(defaultItems, function(err) {
+        if (err) {
+          console.log('error occured');
+        } else {
+          console.log('successfully saved to DB!');
+        }
+      });
+      res.redirect('/');
+    } else {
+      res.render('list', {listTitle: 'Today', newListItems: foundItems});
+    }
   });
 });
 
 app.post('/', function (req, res) {
 
-  let item = req.body.newItem;
+const itemName = req.body.newItem;
+const listName = req.body.list;
 
-  if(req.body.list === 'Work') {
-    workItems.push(item);
-    res.redirect('/work')
+const item = new Item({
+  name: itemName
+});
+
+// check if new items come from a different list
+if (listName === 'Today') {
+  item.save();
+  res.redirect('/');
+} else {
+  List.findOne({
+    name: listName
+  }, function (err, foundList) {
+    foundList.items.push(item);
+    foundList.save();
+    res.redirect('/' + listName);
+  });
+};
+});
+
+app.post('/delete', function (req, res) {
+  const checketItem = req.body.checkbox;
+  const listName = req.body.listName;
+
+  if (listName === 'Today') {
+    Item.findByIdAndRemove(checketItem, function (err) {
+      if (!err) {
+        console.log('successfully deleted from DB.');
+        res.redirect('/');
+      };
+    });
   } else {
-    items.push(item);
-    res.redirect('/');
+    List.findOneAndUpdate({
+      name: listName
+    }, {
+      $pull: {
+        items: {
+          _id: checketItem
+        }
+      }
+    }, function (err, foundList) {
+      if (!err) {
+        res.redirect('/' + listName)
+      }
+    })
   }
-})
+});
 
-// ========================================================
+// ===============custom route============================
 
-app.get('/work', function (req, res) {
-  res.render('list', {
-    listTitle: 'Work List',
-    newListArray: workItems
+app.get('/:customName', function (req, res) {
+  const customName = _.capitalize(req.params.customNam);
+
+  List.findOne({
+    name: customName
+  }, function (err, foundList) {
+    if (!err) {
+      if (!foundList) {
+        // creating a new list
+        const list = new List({
+          name: customName,
+          items: defaultItems
+        });
+
+        list.save();
+        res.redirect('/' + customName)
+      } else {
+        res.render('list', {
+          listTitle: foundList.name,
+          newListItems: foundList.items
+        })
+      };
+    };
   });
 });
 
