@@ -2,11 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const app = express();
-var _ = require('lodash');
+const _ = require('lodash');
 // ========================================================
 
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static('public'));
 mongoose.connect('mongodb://localhost:27017/todoListDB');
 
@@ -19,15 +21,15 @@ const newItems = {
 // new model
 const Item = mongoose.model('Item', newItems)
 
-const item1 = new Item ({
+const item1 = new Item({
   name: 'Welcome to your To Do list!'
 });
 
-const item2 = new Item ({
+const item2 = new Item({
   name: 'Click the + button to add a new item'
 });
 
-const item3 = new Item ({
+const item3 = new Item({
   name: '<-- Hit this to remove an item'
 });
 
@@ -43,13 +45,13 @@ const List = mongoose.model('List', listSchema);
 // ========================================================
 // ===============default route============================
 
-app.get('/', function (req, res){
+app.get('/', function (req, res) {
 
   Item.find({}, function (err, foundItems) {
 
     if (foundItems.length === 0) {
       // inserting default items
-      Item.insertMany(defaultItems, function(err) {
+      Item.insertMany(defaultItems, function (err) {
         if (err) {
           console.log('error occured');
         } else {
@@ -58,33 +60,36 @@ app.get('/', function (req, res){
       });
       res.redirect('/');
     } else {
-      res.render('list', {listTitle: 'Today', newListItems: foundItems});
+      res.render('list', {
+        listTitle: 'Today',
+        newListItems: foundItems
+      });
     }
   });
 });
 
 app.post('/', function (req, res) {
 
-const itemName = req.body.newItem;
-const listName = req.body.list;
+  const itemName = req.body.newItem;
+  const listName = req.body.list;
 
-const item = new Item({
-  name: itemName
-});
-
-// check if new items come from a different list
-if (listName === 'Today') {
-  item.save();
-  res.redirect('/');
-} else {
-  List.findOne({
-    name: listName
-  }, function (err, foundList) {
-    foundList.items.push(item);
-    foundList.save();
-    res.redirect('/' + listName);
+  const item = new Item({
+    name: itemName
   });
-};
+
+  // check if new items come from a different list
+  if (listName === 'Today') {
+    item.save();
+    res.redirect('/');
+  } else {
+    List.findOne({
+      name: listName
+    }, function (err, foundList) {
+      foundList.items.push(item);
+      foundList.save();
+      res.redirect('/' + listName);
+    });
+  };
 });
 
 app.post('/delete', function (req, res) {
@@ -118,7 +123,7 @@ app.post('/delete', function (req, res) {
 // ===============custom route============================
 
 app.get('/:customName', function (req, res) {
-  const customName = _.capitalize(req.params.customNam);
+  const customName = _.capitalize(req.params.customName);
 
   List.findOne({
     name: customName
@@ -146,10 +151,10 @@ app.get('/:customName', function (req, res) {
 // ========================================================
 
 app.get('/about', function (req, res) {
-  res.render('about');
+  res.render('views/about.ejs');
 });
 
-// ========================================================
+// ====================port================================
 
 app.listen(process.env.PORT || 3000, function () {
   console.log('Server started on port 3000.');
