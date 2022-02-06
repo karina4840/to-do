@@ -1,4 +1,3 @@
-
 # <div align="center"> To Do App </div>
 
  <div align="center"> 
