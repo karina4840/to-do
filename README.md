@@ -9,7 +9,7 @@
 <img src="https://img.shields.io/badge/-Heroku-6762A6?logo=heroku&logoColor=white&logoWidth=30">
 <img src="https://img.shields.io/badge/-MongoDB-4FAA41?logo=mongodb&logoColor=white&logoWidth=30">
 <img src="https://img.shields.io/badge/-Lodash-5889c4?logo=lodash&logoColor=white&logoWidth=30"> <br>
-  <a href="to-do-4840.herokuapp.com/">App Here</a>
+  <a href="https://to-do-4840.herokuapp.com/">App Here</a>
 </div>
  
 
