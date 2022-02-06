@@ -13,7 +13,7 @@
 </div>
  
 
-### Usage
+### Description
 - Stay organised and manage your day-to-day tasks with the To Do App. 
 - Create multiple lists by adding a name of a new list at the end of the URL, ex: `https://to-do-4840.herokuapp.com/<LIST NAME HERE>`. 
 - Your text will be automatically capitalized by **Lodash**, ex: words such `HOME, home, hOMe` will be translated into `Home`.
