@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const app = express();
-const uri = process.env.MONGODB_URI;
 const _ = require('lodash');
 // ========================================================
 
@@ -151,7 +150,7 @@ app.get('/:customName', function (req, res) {
 
 // ====================port================================
 
-let port = uri;
+let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
 }
