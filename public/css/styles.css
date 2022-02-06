@@ -1,6 +1,6 @@
 html {
   background-color: #E4E9FD;
-  background-image: -webkit-linear-gradient(65deg, #b4bfeb  50%, #fcd792 50%);
+  background-image: -webkit-linear-gradient(65deg, #b4bfeb 50%, #fcd792 50%);
   min-height: 100vh;
   font-family: 'helvetica neue';
 }
@@ -34,7 +34,7 @@ h1 {
   border-bottom: 0;
 }
 
-input:checked + p {
+input:checked+p {
   text-decoration: line-through;
   text-decoration-color: #847ed4;
   transition: 200ms ease-in-out;
@@ -92,7 +92,8 @@ input[type="text"]:focus {
   color: rgb(177, 177, 177);
   opacity: 1;
 }
- /* ======================================================== */
+
+/* ======================================================== */
 
 footer {
   text-align: center;
@@ -105,17 +106,17 @@ footer {
   padding-bottom: 20px;
 }
 
-.footer-link{
+.footer-link {
   color: #393c74;
   text-decoration: none;
   transition: 200ms ease-in-out;
 }
 
-.footer-link:hover{
+.footer-link:hover {
   color: #81a3b3;
 }
 
-.list-link{
+.list-link {
   text-decoration: none;
   color: #212a75;
   transition: 200ms ease-in-out;
